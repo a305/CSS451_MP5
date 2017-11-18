@@ -55,7 +55,7 @@ public partial class MyMesh : MonoBehaviour
 
     void ComputeNormals(Vector3[] v, Vector3[] n)
     {
-        Vector3[] triNormal = new Vector3[(numVert * numVert - 1)];
+        Vector3[] triNormal = new Vector3[numCol * numRows * 2];
         int triInd = 0;
 
         // If using Visual Studio, extend the code using the + on the side
