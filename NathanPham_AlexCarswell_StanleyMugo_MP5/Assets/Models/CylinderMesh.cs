@@ -6,7 +6,7 @@ using UnityEngine;
 public class CylinderMesh : AllMesh
 {
 	private float cylinderHeight = 3;
-	private float diameter = 0.6f; // In world units
+	private float radius = 0.6f; // In world units
 	private float rotation = 2 * Mathf.PI; // In radiuns
 
 	// Use this for initialization
@@ -25,7 +25,7 @@ public class CylinderMesh : AllMesh
 	{
 		triangles.Clear();
 
-		foreach (Transform child in transform)
+		foreach (BindedPoint child in transform.GetComponentsInChildren<BindedPoint>())
 			GameObject.Destroy(child.gameObject);
 
 		if (numberOfVerticies >= 2)
@@ -94,14 +94,25 @@ public class CylinderMesh : AllMesh
 		v[(int)id] = gObj.transform.localPosition;
 
 
-		int h = (int)id / numCol;
+		int firsRowIndex = (int)id - ((int)id % numRows);
+		float r = (new Vector2(v[(int)id].x, v[(int)id].z)).magnitude; // Radius for this row
+		for (int i = 1; i < numRows; i++)
+		{
+			v[firsRowIndex + i].y = v[(int)id].y;
+			v[firsRowIndex + i].x = r * Mathf.Cos(i * rotation / (numRows - 1));
+			v[firsRowIndex + i].z = r * Mathf.Sin(i * rotation / (numCol - 1));
+			mNormals[firsRowIndex + i].transform.localPosition = v[firsRowIndex + i];
+			mNormals[firsRowIndex + i].transform.hasChanged = false;
+		}
+		Debug.Log(firsRowIndex);
 
 
 		CalculateNormal(numRows - 1, numCol - 1, ref v, ref t, out n);
 		theMesh.vertices = v;
 		theMesh.normals = n;
 	}
-	
+
+
 	private void CreateVerticies(out Vector3[] verticies, out int[] triangles)
 	{
 		int widthResolution = numRows - 1;
@@ -119,8 +130,8 @@ public class CylinderMesh : AllMesh
 				//								(float)(squareHeight * i - 0.5));
 
 				verticies[curentTriangle] = new Vector3(0, cylinderHeight * i / (float) heightResolution, 0);
-				verticies[curentTriangle].x = diameter * Mathf.Cos(k * rotation / widthResolution);
-				verticies[curentTriangle].z = diameter * Mathf.Sin(k * rotation / heightResolution);
+				verticies[curentTriangle].x = radius * Mathf.Cos(k * rotation / widthResolution);
+				verticies[curentTriangle].z = radius * Mathf.Sin(k * rotation / heightResolution);
 
 				if (i != heightResolution && k != widthResolution)
 				{

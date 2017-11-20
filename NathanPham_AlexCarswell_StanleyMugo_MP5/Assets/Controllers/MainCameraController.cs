@@ -73,8 +73,8 @@ public class MainCameraController : MonoBehaviour
 									maxRotationDegY * (mousePosition.y - mouseTrackStartPos.y) / Screen.height,
 									transform.right
 									);
-
-		if (Mathf.Abs(Vector3.Dot(rotatedCamPos.normalized, Vector3.up)) > 0.80f)
+		
+		if (Mathf.Abs(Vector3.Dot((rotatedCamPos - lookAtObj.transform.localPosition).normalized, Vector3.up)) > 0.99f)
 			rotatedCamPos = transform.localPosition;
 
 		rotatedCamPos = RotatePointAroundSphere(rotatedCamPos,

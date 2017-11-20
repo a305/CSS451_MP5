@@ -57,16 +57,18 @@ public class MeshUIController : MonoBehaviour
 
 	private void OnUICylinderResolutionUpdate(char id, float newVal)
 	{
-		visibleMesh.GetComponent<AllMesh>().SetResolution((int)newVal);
+		myWorld.ForceDeselect();
+		cylinderMesh.GetComponent<AllMesh>().SetResolution((int)newVal);
 	}
 
 	private void OnUICylinderRotationUpdate(char id, float newVal)
 	{
-		visibleMesh.GetComponent<CylinderMesh>().SetCylinderRotation((int)newVal);
+		myWorld.ForceDeselect();
+		cylinderMesh.GetComponent<CylinderMesh>().SetCylinderRotation((int)newVal);
 	}
 
 	private void OnUIQuadResolutionUpdate(char id, float newVal)
 	{
-		visibleMesh.GetComponent<AllMesh>().SetResolution((int)newVal);
+		quadMesh.GetComponent<AllMesh>().SetResolution((int)newVal);
 	}
 }

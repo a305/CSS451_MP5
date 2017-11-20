@@ -22,7 +22,7 @@ public class QuadMesh : AllMesh
     private void Start()
 	{
 		gameObject.AddComponent<MeshFilter>();
-		SetResolution(2);
+		SetResolution(4);
 	}
 
 	public override void SetResolution(int numberOfVerticies)
@@ -30,8 +30,7 @@ public class QuadMesh : AllMesh
 		triangles.Clear();
 		mNormals = null;
 
-
-		foreach (Transform child in transform)
+		foreach (BindedPoint child in transform.GetComponentsInChildren<BindedPoint>())
 			GameObject.Destroy(child.gameObject);
 
 		if (numberOfVerticies >= 2)

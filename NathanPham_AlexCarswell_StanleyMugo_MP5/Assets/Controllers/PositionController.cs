@@ -31,7 +31,9 @@ public class PositionController : MonoBehaviour
 			addHanderl.onSelect = AxisSelected;
 			addHanderl.onDrag = AxisMoved;
 			addHanderl.onDeselect = AxisDeselected;
-			addHanderl.onForceDeselect = () => { SetTarget(null); };
+			addHanderl.onForceDeselect = () => {
+				SetTarget(null);
+			};
 		}
 
 		// Enable or disable
@@ -51,14 +53,28 @@ public class PositionController : MonoBehaviour
 		else
 		{
 			enabled = true;
+
 			transform.SetParent(t.transform.parent);
+
+			float distance = (t.transform.position - Camera.main.transform.position).magnitude;
+			Debug.DrawLine(Camera.main.transform.position,
+							Camera.main.transform.position + (t.transform.position - Camera.main.transform.position).normalized * distance,
+							Color.red, 100);
+			
+			float frustumHeight = distance * Mathf.Tan(Camera.main.fieldOfView * 0.5f * Mathf.Deg2Rad);
+
 			transform.localPosition = t.transform.localPosition;
 			transform.localRotation = t.transform.localRotation;
 
-			Vector3 newDim = dimentions.normalized * 
-				Mathf.Max(t.transform.localScale.x,
+			float scaleRelativeToFrustrum = frustumHeight * 0.07f;
+			float scaleRelativeToSelected = Mathf.Max(t.transform.localScale.x,
 							t.transform.localScale.y,
 							t.transform.localScale.z);
+
+			float maxScaleUp = Mathf.Max(scaleRelativeToFrustrum, scaleRelativeToSelected);
+
+
+			Vector3 newDim = dimentions.normalized * maxScaleUp;
 
 			ResizeAxis(newDim.x, newDim.y, newDim.z);
 		}
@@ -87,7 +103,7 @@ public class PositionController : MonoBehaviour
 				1 / centerRadius;
 
 			child.localPosition = child.localPosition.normalized *
-				(axisLength / centerRadius + centerRadius / 2);
+				(axisLength / centerRadius);
 		}
 	}
 
@@ -148,8 +164,11 @@ public class PositionController : MonoBehaviour
 		Vector3 offset3d = Vector3.zero;
 		offset3d += Camera.main.transform.right * mouseDelata.x * frustumWidth * scaleUp;
 		offset3d += Camera.main.transform.up * mouseDelata.y * frustumHeight * scaleUp;
+
+		//offset3d += Camera.main.transform.right * mouseDelata.x * scaleUp;
+		//offset3d += Camera.main.transform.up * mouseDelata.y * scaleUp;
 		offset3d = Vector3.Project(offset3d, selectedAxis.transform.up);
-			
+
 		transform.localPosition = target.transform.localPosition += offset3d;
 		lastMousePos = curentMousePos;
 
