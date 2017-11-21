@@ -10,7 +10,7 @@ public class CylinderMesh : AllMesh
 	private float rotation = 2 * Mathf.PI; // In radiuns
 
 	// Use this for initialization
-	void Start () {
+	void Start() {
 		gameObject.AddComponent<MeshFilter>();
 		SetResolution(10);
 	}
@@ -43,7 +43,6 @@ public class CylinderMesh : AllMesh
 		theMesh.vertices = v;
 		theMesh.normals = n;
 	}
-
 
 	public override void SetResolution(int numberOfVerticies)
 	{
@@ -82,6 +81,9 @@ public class CylinderMesh : AllMesh
 			GameObject o = GameObject.Instantiate(prefabBoundPoint);
 			o.transform.SetParent(this.transform);
 			o.name = "Normal" + i;
+
+			if (!showNormals)
+				o.SetActive(false);
 
 			mNormals[i] = o.transform.GetComponentInChildren<BindedPoint>();
 			mNormals[i].SetRadius(0.1f); // Radius of the sphere

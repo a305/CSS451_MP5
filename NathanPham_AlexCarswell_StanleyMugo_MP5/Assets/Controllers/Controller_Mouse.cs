@@ -13,6 +13,14 @@ public partial class Controller : MonoBehaviour
 	{
 		if (EventSystem.current.IsPointerOverGameObject() && !myWorld.HasSelected()) return;
 
+
+		if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
+			meshUIController.ShowNormals();
+		
+		if (Input.GetKeyUp(KeyCode.LeftControl) || Input.GetKeyUp(KeyCode.RightControl))
+			if (!myWorld.HasSelected())
+				meshUIController.HideNormals();
+
 		if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
 			HandCamera();
 		else if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))

@@ -39,6 +39,18 @@ public class MeshUIController : MonoBehaviour
 		meshSelector.value = 1;
 	}
 
+	public void HideNormals()
+	{
+		quadMesh.HideNormals();
+		cylinderMesh.HideNormals();
+	}
+
+	public void ShowNormals()
+	{
+		quadMesh.ShowNormals();
+		cylinderMesh.ShowNormals();
+	}
+
 	private void DropDownValueChanged(int indexOfNewVal)
 	{
 		visibleMesh.SetActive(false);

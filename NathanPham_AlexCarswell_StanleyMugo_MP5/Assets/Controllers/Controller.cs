@@ -6,6 +6,7 @@ using UnityEngine;
 
 public partial class Controller : MonoBehaviour
 {
+	public MeshUIController meshUIController;
 	public MainCameraController mainCameraCtrl;
 	public PositionController posCtrl;
 	public TheWorld myWorld;
@@ -18,6 +19,7 @@ public partial class Controller : MonoBehaviour
 		Debug.Assert(myWorld != null);
 		Debug.Assert(posCtrl != null);
 		Debug.Assert(mainCameraCtrl != null);
+		Debug.Assert(meshUIController != null);
 
 		Repositionable.posCtrl = posCtrl;
 	}

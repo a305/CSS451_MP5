@@ -29,8 +29,27 @@ public abstract class AllMesh : MonoBehaviour
 	protected Vector3[] v;
 	protected Vector3[] n;
 	protected int[] t;
+	protected bool showNormals = false;
 
 	public abstract void SetResolution(int numberOfVerticies);
+
+	public void HideNormals()
+	{
+		for (int i = 0; i < transform.childCount; i++)
+			if (transform.GetChild(i).GetComponent<BindedPoint>() != null)
+				transform.GetChild(i).gameObject.SetActive(false);
+
+		showNormals = false;
+	}
+
+	public void ShowNormals()
+	{
+		for (int i = 0; i < transform.childCount; i++)
+			if (transform.GetChild(i).GetComponent<BindedPoint>() != null)
+				transform.GetChild(i).gameObject.SetActive(true);
+
+		showNormals = true;
+	}
 
 	public static Vector3 FaceNormal(Vector3[] v, int i0, int i1, int i2)
 	{
@@ -97,6 +116,15 @@ public abstract class AllMesh : MonoBehaviour
 #endregion
 	}
 	
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="widthResolution">Number of squares making up the width.</param>
+	/// <param name="heightResolution">Number of squares making up the height.</param>
+	/// <param name="verticies"></param>
+	/// <param name="triangles"></param>
+	/// <param name="normals"></param>
+	/// <returns>true if normals successfully calcuated, else false</returns>
 	public static bool CalculateNormal(int widthResolution, int heightResolution, ref Vector3[] verticies, ref int[] triangles, out Vector3[] normals)
 	{
 		if (verticies == null || triangles == null || verticies.Length <= 0 || triangles.Length <= 0)
