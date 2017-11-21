@@ -17,9 +17,33 @@ public class CylinderMesh : AllMesh
 
 	public void SetCylinderRotation(float deg)
 	{
+		Mesh theMesh = GetComponent<MeshFilter>().mesh;
 		rotation = deg * Mathf.Deg2Rad;
-		SetResolution(numVert);
+		int widthResolution = numRows - 1;
+		int heightResolution = numCol - 1;
+		
+		int firsRowIndex = 0;
+		for (int i = 0; i <= heightResolution; i++)
+		{
+			float r = (new Vector2(v[firsRowIndex].x, v[firsRowIndex].z)).magnitude; // Radius for this row
+
+			for (int k = 1; k < numRows; k++)
+			{
+				v[firsRowIndex + k].x = r * Mathf.Cos(k * rotation / widthResolution);
+				v[firsRowIndex + k].z = r * Mathf.Sin(k * rotation / heightResolution);
+				mNormals[firsRowIndex + k].transform.localPosition = v[firsRowIndex + k];
+				mNormals[firsRowIndex + k].transform.hasChanged = false;
+			}
+
+			firsRowIndex += numRows;
+		}
+
+
+		CalculateNormal(widthResolution, heightResolution, ref v, ref t, out n);
+		theMesh.vertices = v;
+		theMesh.normals = n;
 	}
+
 
 	public override void SetResolution(int numberOfVerticies)
 	{
@@ -51,11 +75,6 @@ public class CylinderMesh : AllMesh
 
 	void InitNormals(ref Vector3[] v, ref Vector3[] n)
 	{
-		if (v.Length != n.Length)
-		{
-			Debug.Log("Oh no " + v.Length + " " + n.Length);
-		}
-
 		GameObject prefabBoundPoint = Resources.Load("Prefabs\\MeshPoint") as GameObject;
 		mNormals = new BindedPoint[v.Length];
 		for (int i = 0; i < v.Length; i++)
@@ -87,10 +106,7 @@ public class CylinderMesh : AllMesh
 
 	private void UpdateMesh(System.Object id, GameObject gObj)
 	{
-		Mesh theMesh = GetComponent<MeshFilter>().mesh;
-		Vector3[] v = theMesh.vertices;
-		Vector3[] n = theMesh.normals;
-		
+		Mesh theMesh = GetComponent<MeshFilter>().mesh;		
 		v[(int)id] = gObj.transform.localPosition;
 
 
@@ -104,8 +120,6 @@ public class CylinderMesh : AllMesh
 			mNormals[firsRowIndex + i].transform.localPosition = v[firsRowIndex + i];
 			mNormals[firsRowIndex + i].transform.hasChanged = false;
 		}
-		Debug.Log(firsRowIndex);
-
 
 		CalculateNormal(numRows - 1, numCol - 1, ref v, ref t, out n);
 		theMesh.vertices = v;

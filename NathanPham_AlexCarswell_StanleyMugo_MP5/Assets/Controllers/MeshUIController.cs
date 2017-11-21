@@ -63,7 +63,7 @@ public class MeshUIController : MonoBehaviour
 
 	private void OnUICylinderRotationUpdate(char id, float newVal)
 	{
-		myWorld.ForceDeselect();
+		//myWorld.ForceDeselect();
 		cylinderMesh.GetComponent<CylinderMesh>().SetCylinderRotation((int)newVal);
 	}
 

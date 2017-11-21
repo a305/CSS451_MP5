@@ -48,4 +48,13 @@ public class Repositionable : CallbackSelectable
 		base.OnSelect(mousePos, gObj, lastSelected);
 		return true; // Set as selected so OnMouseUp, deselect will be called
 	}
+
+	/// <summary>
+	/// Hide the position controller and prevent it from having anything select to move.
+	/// </summary>
+	public override void OnForcedDeselect()
+	{
+		posCtrl.SetTarget(null);
+		base.OnForcedDeselect();
+	}
 }

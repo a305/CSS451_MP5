@@ -31,9 +31,7 @@ public class PositionController : MonoBehaviour
 			addHanderl.onSelect = AxisSelected;
 			addHanderl.onDrag = AxisMoved;
 			addHanderl.onDeselect = AxisDeselected;
-			addHanderl.onForceDeselect = () => {
-				SetTarget(null);
-			};
+			addHanderl.onForceDeselect = () => { SetTarget(null); };
 		}
 
 		// Enable or disable
@@ -57,10 +55,6 @@ public class PositionController : MonoBehaviour
 			transform.SetParent(t.transform.parent);
 
 			float distance = (t.transform.position - Camera.main.transform.position).magnitude;
-			Debug.DrawLine(Camera.main.transform.position,
-							Camera.main.transform.position + (t.transform.position - Camera.main.transform.position).normalized * distance,
-							Color.red, 100);
-			
 			float frustumHeight = distance * Mathf.Tan(Camera.main.fieldOfView * 0.5f * Mathf.Deg2Rad);
 
 			transform.localPosition = t.transform.localPosition;
