@@ -42,11 +42,11 @@ public class BindedPoint : MonoBehaviour
 	/// Sets the height of the normal line.
 	/// </summary>
 	/// <param name="h"></param>
-	public void SetNormalHeight(float h)
+	public void SetNormalLength(float h)
 	{
 		// The following assumes that this sphere is always circular
 		transform.GetComponentInChildren<LineSegment>()
-			.SetHeight((h + transform.localScale.y / 4) / transform.localScale.y);
+			.SetLength((h + transform.localScale.y / 4) / transform.localScale.y);
 	}
 
 	/// <summary>
@@ -68,12 +68,25 @@ public class BindedPoint : MonoBehaviour
 	/// <param name="end">Point in world space</param>
 	public void MoveTo(Vector3 start, Vector3 end)
 	{
+		Debug.Log((int)identifyingInformation);
+
 		transform.localPosition = start;
 		LineSegment child = transform.GetComponentInChildren<LineSegment>();
 		child.MoveTo(Vector3.zero, end - start, child.height);
 
 		// Place the bottom in the middle of the sphere
-		child.transform.localPosition = child.transform.up * child.transform.localScale.y;
+		//child.transform.localPosition = child.transform.up * child.transform.localScale.y;
+	}
+
+	/// <summary>
+	/// Points the line segment at the given direction while keeping on end of the
+	/// line in the same position. The end that doesn't move was that supplied
+	/// as the start point in the call to <code>MoveTo</code>.
+	/// </summary>
+	/// <param name="dir">Non-zero vector, normalized or not</param>
+	public void PointTo(Vector3 dir)
+	{
+		transform.GetComponentInChildren<LineSegment>().SetDirection(dir);
 	}
 
 	/// <summary>

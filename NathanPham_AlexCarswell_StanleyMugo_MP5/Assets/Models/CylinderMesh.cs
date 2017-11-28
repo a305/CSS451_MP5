@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class CylinderMesh : AllMesh
 {
-	private float cylinderHeight = 3;
-	private float radius = 0.6f; // In world units
-	private float rotation = 2 * Mathf.PI; // In radiuns
+	private float rotation = Mathf.PI; // In radiuns
 
 	// Use this for initialization
 	void Start() {
 		gameObject.AddComponent<MeshFilter>();
-		SetResolution(10);
+		size.x = 1;
+		size.y = 2;
+		SetResolution(10, 10);
 	}
 
 	public void SetCylinderRotation(float deg)
@@ -30,7 +30,7 @@ public class CylinderMesh : AllMesh
 			for (int k = 1; k < numRows; k++)
 			{
 				v[firsRowIndex + k].x = r * Mathf.Cos(k * rotation / widthResolution);
-				v[firsRowIndex + k].z = r * Mathf.Sin(k * rotation / heightResolution);
+				v[firsRowIndex + k].z = r * Mathf.Sin(k * rotation / widthResolution);
 				mNormals[firsRowIndex + k].transform.localPosition = v[firsRowIndex + k];
 				mNormals[firsRowIndex + k].transform.hasChanged = false;
 			}
@@ -38,27 +38,26 @@ public class CylinderMesh : AllMesh
 			firsRowIndex += numRows;
 		}
 
-
 		CalculateNormal(widthResolution, heightResolution, ref v, ref t, out n);
 		theMesh.vertices = v;
 		theMesh.normals = n;
+
+		// Update mesh point model
+		for (int i = 0; i < mNormals.Length; i++)
+			mNormals[i].PointTo(n[i]);
 	}
 
-	public override void SetResolution(int numberOfVerticies)
+	public override void SetResolution(int numVertWidth, int numVertHeight)
 	{
-		triangles.Clear();
-
 		foreach (BindedPoint child in transform.GetComponentsInChildren<BindedPoint>())
 			GameObject.Destroy(child.gameObject);
 
-		if (numberOfVerticies >= 2)
-			numVert = numberOfVerticies;
-
 		Mesh theMesh = new Mesh();
-		numRows = numCol = numVert;
+		numRows = numVertWidth;
+		numCol = numVertHeight;
 
 		// Instatiate Verticies & triangles
-		CreateVerticies(out v, out t);
+		CreateNxMVerticies(size.x, size.y, out v, out t);
 		//ComputeNormals(numRows, numCol, ref v, ref n, ref triangles);
 
 		CalculateNormal(numRows - 1, numCol - 1, ref v, ref t, out n);
@@ -67,7 +66,8 @@ public class CylinderMesh : AllMesh
 		theMesh.triangles = t; //  new int[];
 		theMesh.normals = n;
 		
-		gameObject.GetComponent<MeshFilter>().mesh = theMesh;
+		if (gameObject.GetComponent<MeshFilter>() != null)
+			gameObject.GetComponent<MeshFilter>().mesh = theMesh;
 
 		InitNormals(ref v, ref n);
 	}
@@ -88,7 +88,7 @@ public class CylinderMesh : AllMesh
 			mNormals[i] = o.transform.GetComponentInChildren<BindedPoint>();
 			mNormals[i].SetRadius(0.1f); // Radius of the sphere
 			mNormals[i].SetNormalWidth(0.002f); // Width of the normal line
-			mNormals[i].SetNormalHeight(0.5f); // Height of the normal line
+			mNormals[i].SetNormalLength(0.5f); // Height of the normal line
 			mNormals[i].SetId(i);
 			mNormals[i].MoveTo(v[i], v[i] + 1.0f * n[i]);
 			mNormals[i].transform.hasChanged = false;
@@ -111,14 +111,15 @@ public class CylinderMesh : AllMesh
 		Mesh theMesh = GetComponent<MeshFilter>().mesh;		
 		v[(int)id] = gObj.transform.localPosition;
 
+		int widthResolution = numRows - 1;
 
 		int firsRowIndex = (int)id - ((int)id % numRows);
 		float r = (new Vector2(v[(int)id].x, v[(int)id].z)).magnitude; // Radius for this row
 		for (int i = 1; i < numRows; i++)
 		{
 			v[firsRowIndex + i].y = v[(int)id].y;
-			v[firsRowIndex + i].x = r * Mathf.Cos(i * rotation / (numRows - 1));
-			v[firsRowIndex + i].z = r * Mathf.Sin(i * rotation / (numCol - 1));
+			v[firsRowIndex + i].x = r * Mathf.Cos(i * rotation / widthResolution);
+			v[firsRowIndex + i].z = r * Mathf.Sin(i * rotation / widthResolution);
 			mNormals[firsRowIndex + i].transform.localPosition = v[firsRowIndex + i];
 			mNormals[firsRowIndex + i].transform.hasChanged = false;
 		}
@@ -128,8 +129,7 @@ public class CylinderMesh : AllMesh
 		theMesh.normals = n;
 	}
 
-
-	private void CreateVerticies(out Vector3[] verticies, out int[] triangles)
+	private void CreateNxMVerticies(float n, float m, out Vector3[] verticies, out int[] triangles)
 	{
 		int widthResolution = numRows - 1;
 		int heightResolution = numCol - 1;
@@ -142,12 +142,9 @@ public class CylinderMesh : AllMesh
 		{
 			for (int k = 0; k <= widthResolution; k++)
 			{
-				//verticies[curentTriangle] = new Vector3((float)(squareWidth * k - 0.5), 0,
-				//								(float)(squareHeight * i - 0.5));
-
-				verticies[curentTriangle] = new Vector3(0, cylinderHeight * i / (float) heightResolution, 0);
-				verticies[curentTriangle].x = radius * Mathf.Cos(k * rotation / widthResolution);
-				verticies[curentTriangle].z = radius * Mathf.Sin(k * rotation / heightResolution);
+				verticies[curentTriangle] = new Vector3(0, m * i / (float) heightResolution, 0);
+				verticies[curentTriangle].x = n * 0.5f * Mathf.Cos(k * rotation / widthResolution);
+				verticies[curentTriangle].z = n * 0.5f * Mathf.Sin(k * rotation / widthResolution);
 
 				if (i != heightResolution && k != widthResolution)
 				{

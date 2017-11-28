@@ -11,9 +11,6 @@ public partial class Controller : MonoBehaviour
 	/// </summary>
 	public void ProcessMouseEvents()
 	{
-		if (EventSystem.current.IsPointerOverGameObject() && !myWorld.HasSelected()) return;
-
-
 		if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
 			meshUIController.ShowNormals();
 		
@@ -29,6 +26,8 @@ public partial class Controller : MonoBehaviour
 
 	private void HandleMesh()
 	{
+		if (EventSystem.current.IsPointerOverGameObject() && !myWorld.HasSelected()) return;
+
 		GameObject selectedObj = null;
 		Vector3 selectedPos;
 
@@ -59,6 +58,8 @@ public partial class Controller : MonoBehaviour
 
 	private void HandCamera()
 	{
+		if (EventSystem.current.IsPointerOverGameObject() && !myWorld.HasSelected()) return;
+
 		if (Input.GetMouseButtonDown(0))
 			mainCameraCtrl.StartTumble(Input.mousePosition);
 
@@ -73,8 +74,8 @@ public partial class Controller : MonoBehaviour
 
 		mainCameraCtrl.OnScroll(Input.mouseScrollDelta);
 
-		if (Input.GetKey(KeyCode.LeftShift))
-			mainCameraCtrl.MoveForward();
+		//if (Input.GetKey(KeyCode.LeftShift))
+		//	mainCameraCtrl.MoveForward();
 	}
 
 	/// <summary>

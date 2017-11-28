@@ -27,15 +27,6 @@ public class LineSegment : MonoBehaviour
 		get { return transform.localScale.y * 2; }
 	}
 
-	/// <summary>
-	/// Initialize constant variables.
-	/// </summary>
-	private void Start()
-	{
-		startPoint = transform.localPosition -
-			transform.up.normalized * (transform.localScale.y / 2);
-	}
-
 	///<summary>
 	///Sets the potition of the line using similar arguments as those found
 	///in the line equation.
@@ -54,7 +45,7 @@ public class LineSegment : MonoBehaviour
 			Quaternion rot = Quaternion.FromToRotation(transformUpNorm, dir);
 			transform.localRotation = rot * transform.localRotation;
 		}
-
+		
 		transform.localPosition = start + dir * size * 0.5f;
 		transform.localScale = new Vector3(_diameter, size / 2, _diameter);
 	}
@@ -93,12 +84,22 @@ public class LineSegment : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Sets the heights of the line while maintaining the position and
+	/// Sets the length of the line while maintaining the position and
 	/// direction of the line.
 	/// </summary>
-	/// <param name="h"></param>
-	public void SetHeight(float h)
+	/// <param name="h">The new height.</param>
+	public void SetLength(float h)
 	{
 		MoveTo(startPoint, transform.up, h);
+	}
+
+	/// <summary>
+	/// Sets the directoin of the line while maintaining the starting position
+	/// and the length of the line.
+	/// </summary>
+	/// <param name="d">A non-zero vector giving the direction.</param>
+	public void SetDirection(Vector3 d)
+	{
+		MoveTo(startPoint, d, height);
 	}
 }

@@ -14,29 +14,41 @@ public class MeshUIController : MonoBehaviour
 
 	public TheWorld myWorld;
 	public Dropdown meshSelector;
-	public SliderWithEcho cylinderRes;
+
+	public SliderWithEcho cylinderResWidth;
+	public SliderWithEcho cylinderResHeight;
+
+	public SliderWithEcho quadResWidth;
+	public SliderWithEcho quadResHeight;
+
 	public SliderWithEcho cylinderRot;
-	public SliderWithEcho quadRes;
 
 	void Start ()
 	{
 		Debug.Assert(myWorld != null);
 		Debug.Assert(quadMesh != null);
 		Debug.Assert(meshSelector != null);
-		Debug.Assert(cylinderRes != null);
+		Debug.Assert(cylinderResWidth != null);
+		Debug.Assert(cylinderResHeight != null);
 		Debug.Assert(cylinderRot != null);
-		Debug.Assert(quadRes != null);
+		Debug.Assert(quadResWidth != null);
+		Debug.Assert(quadResHeight != null);
 		visibleMesh = quadMesh.gameObject;
 
-		cylinderRes.onValueChange = OnUICylinderResolutionUpdate;
+		quadMesh.enabled = true;
+		cylinderResWidth.enabled = true;
+
+		cylinderResWidth.onValueChange = OnUICylinderResolutionUpdate;
+		cylinderResHeight.onValueChange = OnUICylinderResolutionUpdate;
 		cylinderRot.onValueChange = OnUICylinderRotationUpdate;
-		quadRes.onValueChange = OnUIQuadResolutionUpdate;
+		quadResWidth.onValueChange = OnUIQuadResolutionUpdate;
+		quadResHeight.onValueChange = OnUIQuadResolutionUpdate;
 
 		meshSelector.ClearOptions();
 		meshSelector.AddOptions(dropDownOptions);
 		meshSelector.onValueChanged.AddListener(DropDownValueChanged);
 
-		meshSelector.value = 1;
+		meshSelector.value = 0; // Start of showing the quadmesh
 	}
 
 	public void HideNormals()
@@ -70,7 +82,8 @@ public class MeshUIController : MonoBehaviour
 	private void OnUICylinderResolutionUpdate(char id, float newVal)
 	{
 		myWorld.ForceDeselect();
-		cylinderMesh.GetComponent<AllMesh>().SetResolution((int)newVal);
+		cylinderMesh.GetComponent<AllMesh>().SetResolution((int)cylinderResWidth.GetValue(),
+															(int) cylinderResHeight.GetValue());
 	}
 
 	private void OnUICylinderRotationUpdate(char id, float newVal)
@@ -81,6 +94,7 @@ public class MeshUIController : MonoBehaviour
 
 	private void OnUIQuadResolutionUpdate(char id, float newVal)
 	{
-		quadMesh.GetComponent<AllMesh>().SetResolution((int)newVal);
+		quadMesh.GetComponent<AllMesh>().SetResolution((int)quadResWidth.GetValue(),
+														(int)quadResHeight.GetValue());
 	}
 }
